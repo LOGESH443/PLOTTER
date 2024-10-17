@@ -1,126 +1,75 @@
 # Plotter_App
-
-
+import streamlit as st
 import matplotlib.pyplot as plt
+import numpy as np
 
-# Data Sets
+# Function to get user input for x and y values
+def get_data():
+    x_values = st.text_input("Enter X values (space-separated):", "1 2 3 4 5")
+    y_values = st.text_input("Enter Y values (space-separated):", "10 20 30 40 50")
+    x_values = [float(x) for x in x_values.split()]
+    y_values = [float(y) for y in y_values.split()]
+    return x_values, y_values
 
-def data():
-    try:
-        x_values = list(map(float, input("Enter X values (space-separated): ").split()))
-        y_values = list(map(float, input("Enter Y values (space-separated): ").split()))
-        
-        if len(x_values) != len(y_values):
-            raise ValueError("X and Y values must have the same length.")
+# Function to generate different plots
+def plot_data(plot_type, x_values, y_values):
+    fig, ax = plt.subplots()
 
-        return x_values, y_values
-    except ValueError as e:
-        print(f"Error: {e}")
-        return data()
-
-# Labels
-def labels():
-    try:
-        t = input("Enter the title of the graph: ")
-        x = input("Enter X-axis label: ")
-        y = input("Enter Y-axis label: ")
-        return t, x, y
-    except Exception as e:
-        print(f"Error: {e}")
-        return labels()
-
-# Customizations
-def plot_customizations(plot_type):
-    customizations = {}
-    
-    if plot_type in ['1', '3']:  # Line and scatter plot
-        customizations['color'] = input("Enter line color (e.g., 'r', 'g', 'b', etc.): ")
-        customizations['marker'] = input("Enter marker style (e.g., 'o', 's', 'x', etc.): ")
-    elif plot_type == '2':  # Bar chart
-        customizations['bar_width'] = float(input("Enter bar width (default is 0.8): "))
-    
-    return customizations
-
-# Graph Functions
-def plot_data(plot_type):
-    try:
-        plt.figure()
-        x_values, y_values = data()
-        t, x, y = labels()
-        customizations = plot_customizations(plot_type)
-
-        if plot_type == '1':  # Line plot
-            plt.plot(x_values, y_values, marker=customizations.get('marker', 'o'), color=customizations.get('color', 'b'))
-            plt.title(t)
-            plt.xlabel(x)
-            plt.ylabel(y)
-        elif plot_type == '2':  # Bar chart
-            plt.bar(x_values, y_values, width=customizations.get('bar_width', 0.8))
-            plt.title(t)
-            plt.xlabel(x)
-            plt.ylabel(y)
-        elif plot_type == '3':  # Scatter plot
-            plt.scatter(x_values, y_values, marker=customizations.get('marker', 'o'), color=customizations.get('color', 'b'))
-            plt.title(t)
-            plt.xlabel(x)
-            plt.ylabel(y)
-        elif plot_type == '4':  # Pie chart
-            plt.pie(y_values, labels=x_values, autopct='%1.1f%%')
-            plt.title(t)
-        elif plot_type == '5':  # Violin plot
-            plt.violinplot([y_values])
-            plt.title(t)
-            plt.xlabel(x)
-            plt.ylabel(y)
-        elif plot_type == '6':  # Box plot
-            plt.boxplot(y_values, vert=False)
-            plt.title(t)
-            plt.xlabel(x)
-            plt.ylabel(y)
-        elif plot_type == '7':  # Gantt chart (Horizontal bar)
-            fig, ax = plt.subplots()
-            ax.broken_barh([(x_values[i], y_values[i]) for i in range(len(x_values))], (10, 9))
-            ax.set_ylim(5, 35)
-            ax.set_xlim(min(x_values), max(x_values) + max(y_values))
-            ax.set_xlabel('Time')
-            ax.set_ylabel('Task')
-            ax.set_yticks([15])
-            ax.set_yticklabels(['Task'])
-            plt.title(t)
-        else:
-            raise ValueError("Invalid plot type selected.")
-
-        if plot_type != '4':  # Pie chart doesn't need axis labels
-            plt.grid(True)
-
-        plt.show()
-
-    except ValueError as ve:
-        print(f"Error: {ve}")
-    except Exception as e:
-        print(f"An unexpected error occurred: {e}")
-
-# Main function
-def main():
-    print("Choose a plot type:")
-    print("1. Line Plot")
-    print("2. Bar Chart")
-    print("3. Scatter Plot")
-    print("4. Pie Chart")
-    print("5. Violin Plot")
-    print("6. Box Plot")
-    print("7. Gantt Chart (Horizontal Bar)")
-
-    plot_type = input("Enter the number corresponding to the plot type: ")
-
-    if plot_type not in ['1', '2', '3', '4', '5', '6', '7']:
-        print("Invalid selection. Please choose a valid plot type.")
+    if plot_type == 'Line Plot':
+        ax.plot(x_values, y_values, marker='o')
+        ax.set_title('Line Plot')
+    elif plot_type == 'Bar Chart':
+        ax.bar(x_values, y_values)
+        ax.set_title('Bar Chart')
+    elif plot_type == 'Scatter Plot':
+        ax.scatter(x_values, y_values)
+        ax.set_title('Scatter Plot')
+    elif plot_type == 'Pie Chart':
+        fig, ax = plt.subplots()
+        ax.pie(y_values, labels=x_values, autopct='%1.1f%%')
+        ax.set_title('Pie Chart')
+    elif plot_type == 'Violin Plot':
+        data = [y_values]  # Violin plots expect a 2D array
+        ax.violinplot(data)
+        ax.set_title('Violin Plot')
+    elif plot_type == 'Box Plot':
+        ax.boxplot(y_values, vert=False)
+        ax.set_title('Box Plot')
+    elif plot_type == 'Gantt Chart':
+        ax.broken_barh([(x_values[i], y_values[i]) for i in range(len(x_values))], (10, 9))
+        ax.set_ylim(5, 35)
+        ax.set_xlim(min(x_values), max(x_values) + max(y_values))
+        ax.set_xlabel('Time')
+        ax.set_ylabel('Task')
+        ax.set_yticks([15])
+        ax.set_yticklabels(['Task'])
+        ax.set_title('Gantt Chart')
     else:
-        if plot_type == '4':
-            print("For Pie Chart, X values are labels and Y values are sizes.")
+        st.error("Invalid plot type")
 
-        # Generate the selected plot
-        plot_data(plot_type)
+    st.pyplot(fig)
+
+# Main program
+def main():
+    st.title("Plot Generator")
+
+    # Sidebar for selecting plot type
+    plot_type = st.sidebar.selectbox("Choose a plot type:", 
+                                     ["Line Plot", "Bar Chart", "Scatter Plot", "Pie Chart", "Violin Plot", "Box Plot", "Gantt Chart"])
+
+    # Get the data to plot
+    st.write(f"You selected: {plot_type}")
+
+    if plot_type == 'Pie Chart':
+        st.info("For Pie Chart, X values will be treated as labels and Y values as sizes.")
+    
+    x_values, y_values = get_data()
+
+    # Generate the selected plot
+    if len(x_values) == len(y_values):
+        plot_data(plot_type, x_values, y_values)
+    else:
+        st.error("X and Y values must have the same length!")
 
 if __name__ == "__main__":
     main()
