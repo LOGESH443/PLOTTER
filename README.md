@@ -1,5 +1,7 @@
 # PLOTTER
-Plotter_App is an interactive Python-based command-line application that allows users to generate various types of plots using matplotlib. The app offers error handling, plot customizations, and supports different graph types like line plots, bar charts, scatter plots, pie charts, violin plots, box plots, and Gantt charts.
+Developed an interactive plotter using Python, leveraging Matplotlib for data visualization and Streamlit for building a responsive web-based user interface.
+Implemented features to allow users to upload datasets, dynamically generate plots (line, bar, scatter, etc.), and customize chart parameters (axes, labels, colors, legends).
+Integrated real-time data rendering, enabling users to interactively adjust plot attributes through an intuitive interface.
 
 Features:
 1) Line Plot – Customize line color and marker styles.
